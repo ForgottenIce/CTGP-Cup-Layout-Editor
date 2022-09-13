@@ -1,5 +1,5 @@
 // Source: https://www.w3schools.com/howto/howto_js_autocomplete.asp
-function autocomplete(inp, trackList) {
+function autocomplete(inp) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     var currentFocus;
@@ -17,16 +17,17 @@ function autocomplete(inp, trackList) {
         /*append the DIV element as a child of the autocomplete container:*/
         this.parentNode.appendChild(a);
         /*for each track in the tracklist...*/
-        for (i = 0; i < trackList.length; i++) {
+        for (let [key, track] of TRACKS) {
+          if (key == 0xFF) continue;
           /*check if the track starts with the same letters as the text field value:*/
-          if (trackList[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          if (track.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
             /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + trackList[i].substr(0, val.length) + "</strong>";
-            b.innerHTML += trackList[i].substr(val.length);
+            b.innerHTML = "<strong>" + track.substr(0, val.length) + "</strong>";
+            b.innerHTML += track.substr(val.length);
             /*insert a input field that will hold the current array item's value:*/
-            b.innerHTML += "<input type='hidden' value=\"" + trackList[i] + "\">";
+            b.innerHTML += "<input type='hidden' value=\"" + track + "\">";
             /*execute a function when someone clicks on the item value (DIV element):*/
                 b.addEventListener("click", function(e) {
                 /*insert the value for the autocomplete text field:*/

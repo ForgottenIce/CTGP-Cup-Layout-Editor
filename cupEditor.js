@@ -178,7 +178,7 @@ downloadButton.addEventListener("click", downloadCupLayout);
 
 // Add autocomplete functionality to input fields
 for (let input of cupInputs) {
-    autocomplete(input, getTrackNamesSorted());
+    autocomplete(input);
 }
 
 // window.addEventListener('beforeunload', function (e) {

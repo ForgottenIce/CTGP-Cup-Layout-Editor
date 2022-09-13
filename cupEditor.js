@@ -28,8 +28,10 @@ function init() {
     maxPages = Math.ceil(cupAmount / cups.length);
 
     //Init new cupLayout
-    cupLayout = TEST_CUP_LAYOUT;
-    cupLayout[215] = 0xFF;
+    cupLayout = [];
+    for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
+        cupLayout.push(0xFF);
+    }
     loadPage();
 
     //Init trackTable

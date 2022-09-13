@@ -1,0 +1,169 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="autocomplete.css">
+  <title>MKWii Time Trials Description Generator</title>
+</head>
+<body style="background-color: #f3f3f3">
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-2">
+          <p>Amount of cups:</p>
+          <input type="number" min="1" max="54" maxlength="2" id="cupAmount" class="input mb-2 has-text-centered" style="width: 4em;">
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column is-9">
+          <div class="box">
+            <div class="columns">
+              <div class="column is-1 is-flex is-vcentered">
+                <button id="cupPrevPage" class="button is-warning has-text-weight-bold center" style="margin:auto; height:50%; width:100%;">
+                  <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="column is-10">
+                <div class="columns" id="cups">
+                  <div class="column">
+                    <div id="cupOne">
+                      <p>Cup 1</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                    <div id="cupTwo">
+                      <p>Cup 2</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div id="cupThree">
+                      <p>Cup 3</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                    <div id="cupFour">
+                      <p>Cup 4</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div id="cupFive">
+                      <p>Cup 5</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                    <div id="cupSix">
+                      <p>Cup 6</p>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                      <div class="autocomplete">
+                        <input type="text" class="input mb-2">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="column is-1 is-flex is-vcentered">
+                <button id="cupNextPage" class="button is-warning has-text-weight-bold" style="margin:auto; height:50%; width:100%;">
+                  <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="columns">
+              <div class="column is-2 is-offset-5 has-text-centered">
+                <p id="pageNumber"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-3">
+          <div class="box" style="height: 100%">
+            <div class="columns">
+              <div class="column has-text-centered">
+                <h4 class="title is-4">Tracks</h4>
+              </div>
+            </div>
+            <div class="columns" style="overflow-y:auto">
+              <div class="column" style="height: 28em; overflow-y: auto;">
+                <table id="trackTable" class="table is-bordered is-striped is-hoverable is-fullwidth"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column is-9">
+          <button class="button is-info" id="downloadButton" style="width: 100%;">Download cupLayout</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="autocomplete.js"></script>
+  <script src="tracks.js"></script>
+  <script src="cupEditor.js"></script>
+</body>
+</html>

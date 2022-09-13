@@ -20,12 +20,12 @@ function autocomplete(inp) {
         for (let [key, track] of TRACKS) {
           if (key == 0xFF) continue;
           /*check if the track starts with the same letters as the text field value:*/
-          if (track.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          if (track.slice(0, val.length).toUpperCase() == val.toUpperCase()) {
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
             /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + track.substr(0, val.length) + "</strong>";
-            b.innerHTML += track.substr(val.length);
+            b.innerHTML = "<strong>" + track.slice(0, val.length) + "</strong>";
+            b.innerHTML += track.slice(val.length);
             /*insert a input field that will hold the current array item's value:*/
             b.innerHTML += "<input type='hidden' value=\"" + track + "\">";
             /*execute a function when someone clicks on the item value (DIV element):*/

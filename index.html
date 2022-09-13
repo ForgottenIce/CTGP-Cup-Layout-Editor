@@ -146,8 +146,18 @@
                 <h4 class="title is-4">Tracks</h4>
               </div>
             </div>
+            <div class="columns is-gapless">
+              <div class="column is-10 has-text-centered">
+                <input id="trackSearchInput" type="text" class="input mb-2" placeholder="Search...">
+              </div>
+              <div class="column is-2">
+                <button id="trackSearchClear" class="button is-danger" disabled>
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
             <div class="columns" style="overflow-y:auto">
-              <div class="column" style="height: 28em; overflow-y: auto;">
+              <div class="column" style="height: 23.5em; overflow-y: auto;">
                 <table id="trackTable" class="table is-bordered is-striped is-hoverable is-fullwidth"></table>
               </div>
             </div>

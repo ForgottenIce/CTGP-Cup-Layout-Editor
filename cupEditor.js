@@ -5,7 +5,8 @@ const cupInputs = document.getElementById("cups").querySelectorAll("input");
 const cupTitles = document.getElementById("cups").querySelectorAll("p");
 const cupNextPage = document.getElementById("cupNextPage");
 const pageNumber = document.getElementById("pageNumber");
-const trackTable = document.getElementById("trackTable");
+const trackSearchInput = document.getElementById("trackSearchInput");
+const trackSearchClear = document.getElementById("trackSearchClear");
 const downloadButton = document.getElementById("downloadButton");
 
 //Constants & Variables
@@ -31,7 +32,7 @@ function init() {
     loadPage();
 
     //Init trackTable
-    loadTrackTable();
+    loadTrackTable("");
 }
 
 function previousPage() {
@@ -75,20 +76,35 @@ function loadPage() {
     }
 }
 
-function loadTrackTable() {
-    const trackTableElement = document.createElement("table");
-    trackTableElement.setAttribute("class", "table is-hoverable is-fullwidth is-bordered");
-    for (const [key, track] of TRACKS) {
-        const tr = trackTableElement.insertRow();
-        const td = tr.insertCell();
-        const p = document.createElement("p");
-        td.setAttribute("style", "padding:1px;");
-        p.setAttribute("style", "padding:0.5em 0.75em;");
-        p.setAttribute("draggable", "true");
-        p.innerHTML = track;
-        td.appendChild(p);
+function loadTrackTable(searchString) {
+    if (typeof searchString != "string") {
+        searchString = "";
     }
-    trackTable.replaceWith(trackTableElement);
+    const trackTableElement = document.createElement("table");
+    trackTableElement.setAttribute("class", "table is-hoverable has-text-centered is-fullwidth is-bordered");
+    trackTableElement.setAttribute("id", "trackTable");
+    for (const [key, track] of TRACKS) {
+        if (track.slice(0, searchString.length).toUpperCase() == searchString.toUpperCase() && key != 0xff) {
+            const tr = trackTableElement.insertRow();
+            const td = tr.insertCell();
+            const p = document.createElement("p");
+            td.setAttribute("style", "padding:1px;");
+            p.setAttribute("style", "padding:0.5em 0.75em;");
+            p.setAttribute("draggable", "true");
+            p.innerHTML = track;
+            td.appendChild(p);
+        }
+    }
+    if (trackTableElement.rows.length == 0) {
+        trackTableElement.appendChild(document.createTextNode("No tracks found"))
+    }
+    document.getElementById("trackTable").replaceWith(trackTableElement);
+}
+
+function clearTrackSearch() {
+    trackSearchInput.value = "";
+    loadTrackTable();
+    trackSearchClear.disabled = true;
 }
 
 function validateCupAmountInput() {
@@ -169,11 +185,25 @@ function intToUint8Array (num) {
 
 //EventListeners
 addEventListener("DOMContentLoaded", init);
+
 cupPrevPage.addEventListener("click", previousPage);
 cupNextPage.addEventListener("click", nextPage);
+
 cupAmountInput.addEventListener("focusout", validateCupAmountInput);
 cupAmountInput.addEventListener("keydown", function(e) {if (e.key == "Enter") validateCupAmountInput()});
 cupAmountInput.addEventListener("focusin", function() {cupAmountInput.select();});
+
+trackSearchInput.addEventListener("input", function(e) {
+    loadTrackTable(e.target.value);
+    if (e.target.value.length > 0) {
+        trackSearchClear.disabled = false;
+    }
+    else {
+        trackSearchClear.disabled = true;
+    }
+});
+trackSearchClear.addEventListener("click", clearTrackSearch);
+
 downloadButton.addEventListener("click", downloadCupLayout);
 
 // Add autocomplete functionality to input fields

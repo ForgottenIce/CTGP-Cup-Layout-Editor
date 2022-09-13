@@ -78,8 +78,7 @@ function loadPage() {
 function loadTrackTable() {
     const trackTableElement = document.createElement("table");
     trackTableElement.setAttribute("class", "table is-hoverable is-fullwidth is-bordered");
-    const sortedTracks = getTrackNamesSorted();
-    for (const track of sortedTracks) {
+    for (const [key, track] of TRACKS) {
         const tr = trackTableElement.insertRow();
         const td = tr.insertCell();
         const p = document.createElement("p");

@@ -219,12 +219,6 @@ const TRACKS = new Map([
     [0xF1, "Yoshi's Woolly Raceway"],
     [0xFF, "No Track Selected"],
 ]);
-    
-function getTrackNamesSorted() {
-    const trackNames = Array.from(TRACKS.values());
-    trackNames.pop(); //Remove 0xFF from the array
-    return trackNames.sort();
-}
 
 const CTGP_TRACK_SLOT_COUNT = 216; //Amount of track slots in CTGP
 

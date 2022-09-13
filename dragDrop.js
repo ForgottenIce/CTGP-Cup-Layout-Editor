@@ -1,6 +1,8 @@
 function trackTableDragStart() {
     for (let input of cupInputs) {
-        input.classList.add("input-highlighted");
+        if (!input.disabled) {
+            input.classList.add("input-highlighted");
+        }
     }
 }
 
@@ -11,8 +13,10 @@ function trackTableDragEnd() {
 }
 
 function inputDragOver(dragEvent) {
-    dragEvent.preventDefault();
-    dragEvent.target.classList.add("input-dragover");
+    if (!dragEvent.target.disabled) {
+        dragEvent.preventDefault();
+        dragEvent.target.classList.add("input-dragover");
+    }
 }
 
 function inputDragLeave(dragEvent) {
@@ -20,6 +24,8 @@ function inputDragLeave(dragEvent) {
 }
 
 function inputDragDrop(dragEvent) {
-    dragEvent.preventDefault();
-    dragEvent.target.classList.remove("input-dragover");
+    if (!dragEvent.target.disabled) {
+        dragEvent.preventDefault();
+        dragEvent.target.classList.remove("input-dragover");
+    }
 }

@@ -7,6 +7,7 @@ const cupNextPage = document.getElementById("cupNextPage");
 const pageNumber = document.getElementById("pageNumber");
 const trackSearchInput = document.getElementById("trackSearchInput");
 const trackSearchClear = document.getElementById("trackSearchClear");
+const trackSearchMode = document.getElementById("trackSearchMode");
 const downloadButton = document.getElementById("downloadButton");
 
 //Constants & Variables
@@ -32,7 +33,7 @@ function init() {
     loadPage();
 
     //Init trackTable
-    loadTrackTable("");
+    loadTrackTable();
 }
 
 function previousPage() {
@@ -85,11 +86,12 @@ function loadTrackTable(searchString) {
     trackTableElement.setAttribute("id", "trackTable");
     for (const [key, track] of TRACKS) {
         if (track.slice(0, searchString.length).toUpperCase() == searchString.toUpperCase() && key != 0xff) {
+            if (cupLayout.includes(key) && trackSearchMode.checked == false) continue;
             const tr = trackTableElement.insertRow();
             const td = tr.insertCell();
             const p = document.createElement("p");
             td.setAttribute("style", "padding:1px;");
-            p.setAttribute("style", "padding:0.5em 0.75em;");
+            p.setAttribute("style", "padding:0.5em 0.75em;cursor:grab");
             p.setAttribute("draggable", "true");
             p.innerHTML = track;
             td.appendChild(p);
@@ -203,6 +205,7 @@ trackSearchInput.addEventListener("input", function(e) {
     }
 });
 trackSearchClear.addEventListener("click", clearTrackSearch);
+trackSearchMode.addEventListener("click", function() {loadTrackTable(trackSearchInput.value)});
 
 downloadButton.addEventListener("click", downloadCupLayout);
 

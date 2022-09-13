@@ -16,10 +16,6 @@ const cupsPerPage = cupInputs.length / 4; // Amount of cups displayed on one pag
 let currentPage = 1;
 let maxPages;
 
-// for (let [key, value] of TRACKS) {
-//     console.log(`${key}: ${value}`);
-// }
-
 function init() {
 
     //Init cupAmount
@@ -65,7 +61,7 @@ function loadPage() {
         cupTitles[i].innerText = `Cup ${cupNumberOffset + i}`;
     }
     for (let i = 0; i < cupInputs.length; i++) {
-        cupInputs[i].value = TRACKS[cupLayout[cupLayoutOffset + i]];
+        cupInputs[i].value = TRACKS.get(cupLayout[cupLayoutOffset + i]);
         cupInputs[i].disabled = false;
     }
 

@@ -88,6 +88,7 @@ function loadTrackTable(searchString) {
     trackTableElement.setAttribute("id", "trackTable");
     for (const [key, track] of TRACKS) {
         if (track.slice(0, searchString.length).toUpperCase() == searchString.toUpperCase() && key != 0xff) {
+            //Table rows
             if (cupLayout.includes(key) && trackSearchMode.checked == false) continue;
             const tr = trackTableElement.insertRow();
             const td = tr.insertCell();
@@ -96,6 +97,12 @@ function loadTrackTable(searchString) {
             p.setAttribute("style", "padding:0.5em 0.75em;cursor:grab");
             p.setAttribute("draggable", "true");
             p.innerHTML = track;
+
+            //Event listeners
+            p.addEventListener("dragstart", trackTableDragStart);
+            p.addEventListener("dragend", trackTableDragEnd)
+
+            //Append
             td.appendChild(p);
         }
     }
@@ -214,6 +221,9 @@ downloadButton.addEventListener("click", downloadCupLayout);
 // Add autocomplete functionality to input fields
 for (let input of cupInputs) {
     autocomplete(input);
+    input.addEventListener("dragover", function(e) {inputDragOver(e)});
+    input.addEventListener("dragleave", function(e) {inputDragLeave(e)});
+    input.addEventListener("drop", function(e) {inputDragDrop(e)});
 }
 
 // window.addEventListener('beforeunload', function (e) {

@@ -30,3 +30,11 @@
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
+
+.input-highlighted {
+  border: 1px dodgerblue solid !important;
+}
+
+.input-dragover {
+  background-color: rgb(217, 238, 255) !important;
+}

@@ -121,6 +121,7 @@ function loadTrackTable(searchString) {
             //Event listeners
             p.addEventListener("dragstart", function(e) {trackTableDragStart(e)});
             p.addEventListener("dragend", function(e) {trackTableDragEnd(e)});
+            p.addEventListener("dblclick", function(e) {trackTableDoubleClick(e)});
 
             //Append
             td.appendChild(p);
@@ -130,6 +131,24 @@ function loadTrackTable(searchString) {
         trackTableElement.appendChild(document.createTextNode("No tracks found"))
     }
     document.getElementById("trackTable").replaceWith(trackTableElement);
+}
+
+function trackTableDoubleClick(clickEvent) {
+    cupLayoutOffset = (currentPage - 1) * cupInputs.length;
+    for (let i = 0; i < cupInputs.length; i++) {
+        if (cupLayout[cupLayoutOffset + i] == 0xff && !cupInputs[i].disabled) {
+            lol = clickEvent;
+            updateTrackFromCupInput(cupInputs[i], parseInt(clickEvent.target.dataset.trackid));
+            return;
+        }
+    }
+    // Uncomment this to make the function run again on the next page in case all inputs were already occupied by a track
+    /*
+    if (currentPage < maxPages) {
+        nextPage();
+        trackTableDoubleClick(clickEvent);
+    }
+    */
 }
 
 function clearTrackSearch() {
@@ -182,7 +201,7 @@ function downloadCupLayout() {
         let a = window.document.createElement('a');
     
         a.href = window.URL.createObjectURL(new Blob([uint8Array], { type: 'application/octet-stream' }));
-        a.download = "cupLayout.cup";
+        a.download = "cuplayout.cup";
     
         // Append anchor to body.
         document.body.appendChild(a)

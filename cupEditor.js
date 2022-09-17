@@ -1,7 +1,7 @@
 //Elements
 const cupAmountInput = document.getElementById("cupAmount");
 const cupPrevPage = document.getElementById("cupPrevPage");
-const cupInputs = document.getElementById("cups").querySelectorAll("input");
+const cupInputs = Array.from(document.getElementById("cups").querySelectorAll("input"));
 const cupTitles = document.getElementById("cups").querySelectorAll("p");
 const cupNextPage = document.getElementById("cupNextPage");
 const pageNumber = document.getElementById("pageNumber");
@@ -11,6 +11,7 @@ const trackSearchMode = document.getElementById("trackSearchMode");
 const downloadButton = document.getElementById("downloadButton");
 
 //Constants & Variables
+var cupLayoutChanged = false;
 const fileMagic = [0x43, 0x55, 0x50, 0x32]; // CUP2 in ASCII
 let cupAmount; // Integer
 let cupLayout = []; // Byte-array
@@ -37,6 +38,24 @@ function init() {
     //Init trackTable
     loadTrackTable();
 }
+
+function validateCupAmountInput() {
+    const val = parseInt(cupAmountInput.value);
+    if (val > 54) {
+        cupAmountInput.value = 54;
+    }
+    else if (val < 1 || isNaN(val)) {
+        cupAmountInput.value = cupAmount;
+    }
+    cupAmount = cupAmountInput.value;
+    if (cupAmountInput === document.activeElement) cupAmountInput.select();
+    loadPage();
+}
+
+function calcMaxPages() {
+    return Math.ceil(cupAmount / cups.length);
+}
+
 
 function previousPage() {
     if (currentPage > 1) {
@@ -96,11 +115,12 @@ function loadTrackTable(searchString) {
             td.setAttribute("style", "padding:1px;");
             p.setAttribute("style", "padding:0.5em 0.75em;cursor:grab");
             p.setAttribute("draggable", "true");
+            p.setAttribute("data-trackid", key);
             p.innerHTML = track;
 
             //Event listeners
-            p.addEventListener("dragstart", trackTableDragStart);
-            p.addEventListener("dragend", trackTableDragEnd)
+            p.addEventListener("dragstart", function(e) {trackTableDragStart(e)});
+            p.addEventListener("dragend", function(e) {trackTableDragEnd(e)});
 
             //Append
             td.appendChild(p);
@@ -118,21 +138,12 @@ function clearTrackSearch() {
     trackSearchClear.disabled = true;
 }
 
-function validateCupAmountInput() {
-    const val = parseInt(cupAmountInput.value);
-    if (val > 54) {
-        cupAmountInput.value = 54;
-    }
-    else if (val < 1 || isNaN(val)) {
-        cupAmountInput.value = cupAmount;
-    }
-    cupAmount = cupAmountInput.value;
-    if (cupAmountInput === document.activeElement) cupAmountInput.select();
-    loadPage();
-}
-
-function calcMaxPages() {
-    return Math.ceil(cupAmount / cups.length);
+function updateTrackFromCupInput(cupInput, trackId) {
+    cupLayoutOffset = (currentPage - 1) * cupInputs.length + cupInputs.indexOf(cupInput);
+    cupLayout[cupLayoutOffset] = trackId;
+    cupInput.value = TRACKS.get(trackId);
+    loadTrackTable(trackSearchInput.value);
+    cupLayoutChanged = true;
 }
 
 function isCupLayoutLegal() {
@@ -224,12 +235,15 @@ for (let input of cupInputs) {
     input.addEventListener("dragover", function(e) {inputDragOver(e)});
     input.addEventListener("dragleave", function(e) {inputDragLeave(e)});
     input.addEventListener("drop", function(e) {inputDragDrop(e)});
+    input.addEventListener("focusout", function(e) {
+        cupLayoutOffset = (currentPage - 1) * cupInputs.length + cupInputs.indexOf(e.target);
+        e.target.value = TRACKS.get(cupLayout[cupLayoutOffset]);
+    });
 }
 
-// window.addEventListener('beforeunload', function (e) {
-//     // Cancel the event and show alert that
-//     // the unsaved changes would be lost
-//     e.preventDefault();
-//     e.returnValue = 'test';
-
-// });
+window.addEventListener('beforeunload', function (e) {
+    if (cupLayoutChanged) {
+        e.preventDefault();
+        e.returnValue = 'Are you sure you want to exit? Your cup layout will be lost!';
+    }
+});

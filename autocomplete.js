@@ -9,7 +9,7 @@ function autocomplete(inp) {
         /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
-        currentFocus = -1;
+        currentFocus = 0;
         /*create a DIV element that will contain the items (values):*/
         a = document.createElement("DIV");
         a.setAttribute("id", this.id + "autocomplete-list");
@@ -30,8 +30,7 @@ function autocomplete(inp) {
             b.innerHTML += "<input type='hidden' value=\"" + track + "\">";
             /*execute a function when someone clicks on the item value (DIV element):*/
                 b.addEventListener("click", function(e) {
-                /*insert the value for the autocomplete text field:*/
-                inp.value = this.getElementsByTagName("input")[0].value;
+                updateTrackFromCupInput(inp, key);
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists();
@@ -39,11 +38,13 @@ function autocomplete(inp) {
             a.appendChild(b);
           }
         }
+        if (a.children.length > 0) addActive(a.children);
     });
     inp.addEventListener("click", function() {inp.select();});
     /*execute a function presses a key on the keyboard:*/
     inp.addEventListener("keydown", function(e) {
         var x = document.getElementById(this.id + "autocomplete-list");
+        if (x == null) return;
         if (x) x = x.getElementsByTagName("div");
         if (e.key == "ArrowDown") {
           e.preventDefault();
@@ -60,10 +61,7 @@ function autocomplete(inp) {
           /*and and make the current item more visible:*/
           addActive(x);
         } else if (e.key == "Enter") {
-          if (currentFocus == -1 && x.length > 0) {
-            if (x) x[0].click();
-          }
-          else if (currentFocus > -1) {
+          if (x.length > 0) {
             /*and simulate a click on the "active" item:*/
             if (x) x[currentFocus].click();
           }

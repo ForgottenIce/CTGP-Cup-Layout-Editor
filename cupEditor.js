@@ -9,6 +9,7 @@ const trackSearchInput = document.getElementById("trackSearchInput");
 const trackSearchClear = document.getElementById("trackSearchClear");
 const trackSearchMode = document.getElementById("trackSearchMode");
 const downloadButton = document.getElementById("downloadButton");
+const copyUrlButton = document.getElementById("copyUrlButton");
 
 //Constants & Variables
 var cupLayoutChanged = false;
@@ -33,10 +34,39 @@ function init() {
     for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
         cupLayout.push(0xFF);
     }
+
+    loadTracksFromURL();
+    validateCupAmountInput();
+
     loadPage();
 
     //Init trackTable
     loadTrackTable();
+}
+
+function loadTracksFromURL() {
+    //Load cupLayout from URL query string
+    const queryString = window.location.search;
+    const params = new URLSearchParams(queryString);
+    cupAmountInput.value = parseInt(params.get("ca"));
+    const tracks = params.get("cl");
+    if (tracks == undefined || tracks.length > CTGP_TRACK_SLOT_COUNT*2 || tracks % 2 == 1) {
+        return;
+    }
+    for (let i = 0; i < tracks.length; i += 2) {
+        const trackId = parseInt(tracks.substring(i, i + 2), 16);
+        if (TRACKS.get(trackId) == undefined) {
+            //Init new cupLayout
+            cupLayout = [];
+            for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
+                cupLayout.push(0xFF);
+            }
+            return;
+        }
+        else {
+            cupLayout[i / 2] = trackId;
+        }
+    }
 }
 
 function validateCupAmountInput() {
@@ -216,6 +246,28 @@ function downloadCupLayout() {
     }
 }
 
+async function copyCupLayoutURL() {
+    let trackString = "";
+    for (let i = cupLayout.length - 1; i >= 0; i--) {
+        if (trackString.length == 0 && cupLayout[i] == 0xFF) {
+            continue;
+        }
+        trackString = cupLayout[i].toString(16).toUpperCase() + trackString;
+    }
+    const loc = window.location;
+
+    let cupLayoutURL;
+    if (trackString.length == 0) cupLayoutURL = `${loc.protocol}//${loc.host}${loc.pathname}?ca=${cupAmount}`
+    else cupLayoutURL = `${loc.protocol}//${loc.host}${loc.pathname}?ca=${cupAmount}&cl=${trackString}`
+
+    navigator.clipboard.writeText(cupLayoutURL);
+    copyUrlButton.innerText = "Copied!";
+    await delay(2000);
+    copyUrlButton.innerText = "Copy cuplayout URL";
+}
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 function intToUint8Array (num) {
     //Source: https://github.com/AtishaRibeiro/TT-Rec-Tools/blob/dev/ghostmanager/Scripts/import_export.js
     arr = new ArrayBuffer(4); // an Int32 takes 4 bytes
@@ -247,6 +299,7 @@ trackSearchClear.addEventListener("click", clearTrackSearch);
 trackSearchMode.addEventListener("click", function() {loadTrackTable(trackSearchInput.value)});
 
 downloadButton.addEventListener("click", downloadCupLayout);
+copyUrlButton.addEventListener("click", copyCupLayoutURL)
 
 // Add autocomplete functionality to input fields
 for (let input of cupInputs) {

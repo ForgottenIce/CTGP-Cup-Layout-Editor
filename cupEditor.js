@@ -267,6 +267,7 @@ function createNewCupLayout() {
         cupAmount = 54;
         cupAmountInput.value = cupAmount;
         defaultCupLayout();
+        currentPage = 1;
         loadPage();
     }
 }

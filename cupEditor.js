@@ -297,6 +297,7 @@ function importCupLayoutFromFile() {
                         cupLayout[i] = cupLayoutBytes[i];
                     }
                 }
+                currentPage = 1;
                 loadPage();
             }
         }

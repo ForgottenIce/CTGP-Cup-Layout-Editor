@@ -248,7 +248,7 @@ function downloadCupLayout() {
 
 async function copyCupLayoutURL() {
     let trackString = "";
-    for (let i = cupLayout.length - 1; i >= 0; i--) {
+    for (let i = cupAmount*4 - 1; i >= 0; i--) {
         if (trackString.length == 0 && cupLayout[i] == 0xFF) {
             continue;
         }

@@ -1,4 +1,6 @@
 //Elements
+const newButton = document.getElementById("newButton");
+const importFile = document.getElementById("importFile");
 const cupAmountInput = document.getElementById("cupAmount");
 const cupPrevPage = document.getElementById("cupPrevPage");
 const cupInputs = Array.from(document.getElementById("cups").querySelectorAll("input"));
@@ -18,37 +20,35 @@ let cupAmount; // Integer
 let cupLayout = []; // Byte-array
 const cupsPerPage = cupInputs.length / 4; // Amount of cups displayed on one page
 let currentPage = 1;
-let maxPages;
+let maxPages = Math.ceil(cupAmount / cups.length);
 
 function init() {
 
-    //Init cupAmount
     cupAmountInput.value = 54;
     cupAmount = cupAmountInput.value;
 
-    //Init maxPages
-    maxPages = Math.ceil(cupAmount / cups.length);
-
-    //Init new cupLayout
-    cupLayout = [];
-    for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
-        cupLayout.push(0xFF);
-    }
-
+    defaultCupLayout();
     loadTracksFromURL();
     validateCupAmountInput();
 
     loadPage();
-
-    //Init trackTable
     loadTrackTable();
+}
+
+function defaultCupLayout() {
+    cupLayoutChanged = false;
+    cupLayout = [];
+    for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
+        cupLayout.push(0xFF);
+    }
 }
 
 function loadTracksFromURL() {
     //Load cupLayout from URL query string
     const queryString = window.location.search;
     const params = new URLSearchParams(queryString);
-    cupAmountInput.value = parseInt(params.get("ca"));
+    const cups = params.get("ca");
+    if (cups != null) cupAmountInput.value = parseInt(cups);
     const tracks = params.get("cl");
     if (tracks == undefined || tracks.length > CTGP_TRACK_SLOT_COUNT*2 || tracks % 2 == 1) {
         return;
@@ -56,11 +56,7 @@ function loadTracksFromURL() {
     for (let i = 0; i < tracks.length; i += 2) {
         const trackId = parseInt(tracks.substring(i, i + 2), 16);
         if (TRACKS.get(trackId) == undefined) {
-            //Init new cupLayout
-            cupLayout = [];
-            for (let i = 0; i < CTGP_TRACK_SLOT_COUNT; i++) {
-                cupLayout.push(0xFF);
-            }
+            defaultCupLayout();
             return;
         }
         else {
@@ -266,6 +262,47 @@ async function copyCupLayoutURL() {
     copyUrlButton.innerText = "Copy cuplayout URL";
 }
 
+function createNewCupLayout() {
+    if (confirm("Create new cup layout?\nThe current cup layout will be lost.")) {
+        cupAmount = 54;
+        cupAmountInput.value = cupAmount;
+        defaultCupLayout();
+        loadPage();
+    }
+}
+
+function importCupLayoutFromFile() {
+    cupLayoutChanged = false;
+    const cupFile = importFile.files[0];
+    if (cupFile != undefined) {
+        const fr = new FileReader();
+        fr.readAsArrayBuffer(cupFile);
+        fr.onload = function() {
+            let cupFileBytes = new Uint8Array(fr.result);
+            let fileMagic = "";
+            for (let i = 0; i < 4; i++) {
+                fileMagic += String.fromCharCode(cupFileBytes[i]);
+            }
+            if (fileMagic == "CUP2" && cupFileBytes.length == 224) {
+                let cupAmountView = new DataView(cupFileBytes.buffer, 4, 4);
+                cupAmount = cupAmountView.getUint32();
+                cupAmountInput.value = cupAmount;
+                let cupLayoutBytes = new Uint8Array(cupFileBytes.buffer, 8);
+                cupLayout = [];
+                for (let i = 0; i < cupLayoutBytes.length; i++) {
+                    if (TRACKS.get(cupLayoutBytes[i]) == undefined) {
+                        cupLayout[i] = 0xFF;
+                    }
+                    else {
+                        cupLayout[i] = cupLayoutBytes[i];
+                    }
+                }
+                loadPage();
+            }
+        }
+    }
+}
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 function intToUint8Array (num) {
@@ -278,6 +315,10 @@ function intToUint8Array (num) {
 
 //EventListeners
 addEventListener("DOMContentLoaded", init);
+
+newButton.addEventListener("click", createNewCupLayout);
+importFile.addEventListener("click", function(e) {e.target.value = ""}); // Reset selected file so the same file can be selected twice
+importFile.addEventListener("change", importCupLayoutFromFile);
 
 cupPrevPage.addEventListener("click", previousPage);
 cupNextPage.addEventListener("click", nextPage);

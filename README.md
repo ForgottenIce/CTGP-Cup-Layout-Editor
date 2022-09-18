@@ -6,6 +6,5 @@ The cup layout is modified by either typing the track name in the respective tex
 The tool is hosted on GitHub Pages and can be found [here](https://forgottenice.github.io/CTGP-Cup-Layout-Editor)
 
 Features to be added:
-- Cup layout import
 - Save cup layout to local storage when exiting/reloading the page
 - Merging cup layouts

@@ -8,3 +8,4 @@ The tool is hosted on GitHub Pages and can be found [here](https://forgottenice.
 Features to be added:
 - Save cup layout to local storage when exiting/reloading the page
 - Merging cup layouts
+ 
